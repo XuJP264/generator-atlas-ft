@@ -8,15 +8,22 @@ __pycache__/
 .venv
 conda_envs/
 
-# Logs
-*.log
-wandb/
-flash-attn/
-
-# Large outputs
+# Training outputs
 results/
 vep_results/
 sequence_recovery_results/
+wandb/
+
+# Build / local deps
+flash-attn/
+
+# Logs (only keep explicitly whitelisted ones)
+*.log
+!generator_atlas_ft_3b_4gpu_1epoch.log
+
+# Shell scripts (only keep the main one)
+*.sh
+!generator_atlas_ft_4gpu_3b.sh
 
 # OS
 .DS_Store
