@@ -1,225 +1,128 @@
-<p align="center">
-  <picture>
-    <img alt="Gener" src="figures/logo.png" width=50%>
-  </picture>
-</p>
+# GENERator Atlas Fine-tuning Records
 
-<h1 align="center">GENERator: A Long-Context Generative Genomic Foundation Model</h1>
+This repository is a **fine-tuning and experiment record repository** based on  
+the official **GENERator** project:
 
-## ⚠️ Important Notice
-If you are using GENERator for **sequence generation**, please ensure that the length of each input sequence is a multiple of **6**. This can be achieved by either:  
-1. Padding the sequence on the left with `'A'` (**left padding**);  
-2. Truncating the sequence from the left (**left truncation**).  
+https://github.com/GenerTeam/GENERator.git
 
-This requirement arises because GENERator employs a **6-mer** tokenizer. If the input sequence length is not a multiple of **6**, the tokenizer will append an `'<oov>'` (out-of-vocabulary) token to the end of the token sequence. This can result in uninformative subsequent generations, such as repeated `'AAAAAA'`.  
+The **usage, command-line interface, and overall workflow are identical to the original GENERator repository**.  
+This repository mainly serves as a record and extension of fine-tuning experiments conducted on top of GENERator.
 
-We apologize for any inconvenience this may cause and recommend adhering to the above guidelines to ensure accurate and meaningful generation results.
+---
 
-## 📰 News
+## 1. Base Repository
 
-* 🤗 **[2025-11-05]** GENERator-v2 series are now available on [HuggingFace](https://huggingface.co/GenerTeam/)!
-* 📑 **[2025-02-12]** Our paper is now available on [arXiv](https://arxiv.org/abs/2502.07272)!
-* 🤗 **[2025-02-11]** Our models `GENERator-eukaryote-1.2b-base`,
-  `GENERator-eukaryote-3b-base` are now available on [HuggingFace](https://huggingface.co/GenerTeam/)!
+This work is built upon the official GENERator codebase:
 
-## 🔭 Overview
+- **GENERator GitHub**: https://github.com/GenerTeam/GENERator.git  
+- **Paper**: *GENERator: A Long-Context Generative Genomic Foundation Model* (Wu et al., 2025)
 
-<div align="center">
-  <img src="figures/sequence_recovery_eukaryote.png" />
-  <img src="figures/sequence_recovery_prokaryote.png" />
-  <img src="figures/clinvar.png" />
-  <img src="figures/generation_time.png" width="60%" />
-  <img src="figures/embedding.png" width="60%" />
-</div>
+All scripts in this repository follow the same execution logic as the original GENERator repository unless explicitly stated otherwise.
 
-In this repository, we present GENERator, a collection of generative genomic foundation models utilizing the transformer
-decoder architecture, trained on expansive DNA datasets derived from
-the [RefSeq database](https://www.ncbi.nlm.nih.gov/refseq/). Our evaluations demonstrate that the GENERator consistently
-achieves state-of-the-art performance across a wide spectrum of benchmarks,
-including [Genomic Benchmarks](https://huggingface.co/datasets/katielink/genomic-benchmarks/tree/main), [NT tasks](https://huggingface.co/datasets/InstaDeepAI/nucleotide_transformer_downstream_tasks_revised),
-and our newly proposed [Gener tasks](https://huggingface.co/GenerTeam).
+---
 
-Beyond benchmark performance, the GENERator adheres to the central dogma of molecular biology, accurately generating
-protein-coding DNA sequences that produce proteins structurally analogous to known families. Moreover, the GENERator
-showcases significant promise in sequence optimization, particularly in the design of enhancer sequences that regulate
-gene expression during various biological stages, highlighting its potential for a series of biologically significant
-tasks. Our findings position the GENERator as a vital resource for genomic research and biotechnological advancement. By
-enhancing our capability to interpret and predict genomic sequences, the GENERator paves the way for profound
-improvements in our understanding of complex biological systems and the development of precise genomic interventions.
+## 2. Fine-tuning Dataset
 
-For more technical details, please refer to our paper on [arXiv](https://arxiv.org/abs/2502.07272).
+The fine-tuning dataset used in this repository is located in:
 
-In this repository, you will find the following model checkpoints:
+```text
+dataset/
+````
 
-| Model Name                          | Parameters | Data  |          Category          |                                    Status                                     |
-|-------------------------------------|:----------:|:-----:|:--------------------------:|:-----------------------------------------------------------------------------:|
-| `GENERator-eukaryote-1.2b-base`     |    1.2B    | 386B  |         Eukaryote          |[Available](https://huggingface.co/GenerTeam/GENERator-eukaryote-1.2b-base)    |
-| `GENERator-eukaryote-3b-base`       |     3B     | 386B  |         Eukaryote          |[Available](https://huggingface.co/GenerTeam/GENERator-eukaryote-3b-base)      |
-| `GENERator-v2-eukaryote-1.2b-base`  |    1.2B    | 422B  |         Eukaryote          |[Available](https://huggingface.co/GenerTeam/GENERator-v2-eukaryote-1.2b-base) |
-| `GENERator-v2-eukaryote-3b-base`    |     3B     | 422B  |         Eukaryote          |[Available](https://huggingface.co/GenerTeam/GENERator-v2-eukaryote-3b-base)   |
-| `GENERator-v2-prokaryote-1.2b-base` |    1.2B    | 515B  |         Prokaryote         |[Available](https://huggingface.co/GenerTeam/GENERator-v2-prokaryote-1.2b-base)|
-| `GENERator-v2-prokaryote-3b-base`   |     3B     | 515B  |         Prokaryote         |[Available](https://huggingface.co/GenerTeam/GENERator-v2-prokaryote-3b-base)  |
+### Dataset source
 
-## 📈 Benchmark Performance
+The dataset is derived from **CRISPR-Cas Atlas**:
 
-![benchmark](figures/benchmarks.png)
+* **CRISPR-Cas Atlas GitHub**:
+  [https://github.com/Profluent-AI/CRISPR-Cas-Atlas.git](https://github.com/Profluent-AI/CRISPR-Cas-Atlas.git)
 
-## 🎯 Quick Start
+The dataset was preprocessed and reorganized for causal language model fine-tuning on genomic sequences.
 
-### Dependencies
+---
 
-* Clone this repo, cd into it
+## 3. Backbone Model
 
-```shell
-git clone https://github.com/GenerTeam/GENERator.git
-cd GENERator
-```
+The backbone model used for fine-tuning is:
 
-* Install requirements with Python 3.10
+* **GENERator-eukaryote-3b-base**
+  [https://huggingface.co/GenerTeam/GENERator-eukaryote-3b-base](https://huggingface.co/GenerTeam/GENERator-eukaryote-3b-base)
 
-```shell
-pip install -r requirements.txt
-```
+Fine-tuning was performed on top of this pretrained checkpoint without changing the model architecture.
 
-* To support much longer sequence lengths during pre‐training, we recommend installing both [Liger Kernel]( https://github.com/linkedin/Liger-Kernel) and [FlashAttention](https://github.com/Dao-AILab/flash-attention). Remarkably, using sliding‐window attention on just one A100 GPU, we extended the base‐pair (bp) context length to 1 million.
-```shell
-pip install liger-kernel
-pip install flash-attn --no-build-isolation
-```
+---
 
-> If your network cannot access huggingface.co normally, we recommend using the following mirror:
-> ```shell
-> export HF_ENDPOINT=https://hf-mirror.com
-> ```
+## 4. Code Modifications and Extensions
 
-### Downstream
+Compared with the original GENERator repository, this repository includes **minor but practical modifications**, mainly for engineering compatibility and experiment management:
 
-#### Variant Effect Prediction
+### Key differences from the original repo
 
-To run the variant effect prediction task on [clinvar](https://huggingface.co/datasets/songlab/clinvar), you can use the
-following command:
+* Adjustments to **better support specific PyTorch versions**
+* Additional functionality added to existing scripts, for example:
 
-```shell
-# FP32 (default)
-python src/tasks/downstream/variant_effect_prediction.py
+  * Fine-tuning scripts now support **saving checkpoints by training steps**
+  * Additional utility scripts for generation, embedding extraction, and log processing
+* Several **new scripts** are included for:
 
-# BF16 for faster inference (recommended if supported)
-python src/tasks/downstream/variant_effect_prediction.py --bf16
-```
-Note: BF16 provides faster inference with minimal accuracy impact on supported hardware.
+  * Atlas fine-tuning
+  * Fast sanity-check experiments
+  * Result analysis and visualization
 
-#### Sequence Recovery
+These changes do **not** alter the core modeling logic of GENERator.
 
-This task (previously called Next Kmer Prediction) evaluates the model ability to recover DNA sequences.
+---
 
-To run sequence recovery on our [datasets](https://huggingface.co/datasets/GenerTeam/sequence-recovery), you can use the
-following command:
+## 5. Fine-tuned Model
 
-```shell
-# FP32 (default)
-python src/tasks/downstream/sequence_recovery.py
+The fine-tuned model produced in this repository is publicly available at:
 
-# BF16 for faster inference (recommended if supported)
-python src/tasks/downstream/sequence_recovery.py --bf16
-```
-Note: BF16 provides faster inference with minimal accuracy impact on supported hardware.
+* **generator-v2-prokaryote-3b-atlas-ft**
+  [https://huggingface.co/metaXu264/generator-v2-prokaryote-3b-atlas-ft](https://huggingface.co/metaXu264/generator-v2-prokaryote-3b-atlas-ft)
 
-#### Sequence Understanding (Classification/Regression)
+This model is a GENERator v2 prokaryote model fine-tuned on CRISPR-Cas Atlas–derived data.
 
-To run the sequence understanding task
-on [Gener Tasks](https://huggingface.co/datasets/GenerTeam/gener-tasks), [NT Tasks](https://huggingface.co/datasets/InstaDeepAI/nucleotide_transformer_downstream_tasks_revised), [Genomic Benchmarks](https://huggingface.co/katarinagresova), [DeepSTARR Enhancer](https://huggingface.co/datasets/GenerTeam/DeepSTARR-enhancer-activity),
-you can use the following arguments:
+---
 
-* Gener Tasks
-    * `--dataset_name GenerTeam/gener-tasks`
-    * `--subset_name gene_classification` or `--subset_name taxonomic_classification`
-* NT Tasks
-    * `--dataset_name InstaDeepAI/nucleotide_transformer_downstream_tasks_revised`
-    * `--subset_name H2AFZ` or `--subset_name H3K27ac` or ...
-* Genomic Benchmarks
-    * `--dataset_name katarinagresova/Genomic_Benchmarks_demo_human_or_worm` or
-      `--dataset_name katarinagresova/Genomic_Benchmarks_human_ocr_ensembl` or ...
-* DeepSTARR Enhancer Activity
-    * `--dataset_name GenerTeam/DeepSTARR-enhancer-activity`
-    * `--problem_type regression`
+## 6. Usage
 
-on following command:
+Since this repository is based on the official GENERator codebase,
+**all usage instructions are identical to the original repository**:
 
-```shell
-# Using single GPU
-python src/tasks/downstream/sequence_understanding.py \
-    --model_name GenerTeam/GENERator-eukaryote-1.2b-base \
-    --dataset_name ${DATASET_NAME} \
-    --subset_name ${SUBSET_NAME} \
-    --batch_size ${BATCH_SIZE} \
-    --problem_type ${PROBLEM_TYPE} \
-    --main_metrics ${MAIN_METRICS}
+👉 Please refer to the official GENERator README for detailed usage instructions:
 
-# Using multiple GPUs on single node (DDP)
-torchrun --nnodes=1 \
-    --nproc_per_node=${NUM_GPUS} \
-    --rdzv_backend=c10d \
-    src/tasks/downstream/sequence_understanding.py
+[https://github.com/GenerTeam/GENERator.git](https://github.com/GenerTeam/GENERator.git)
 
-# Using multiple GPUs on multiple nodes (DDP)
-torchrun --nnodes=${NUM_NODES} \
-    --nproc_per_node=${NUM_GPUS_PER_NODE} \
-    --rdzv_backend=c10d \
-    --rdzv_endpoint=${MASTER_ADDR}:${MASTER_PORT} \
-    src/tasks/downstream/sequence_understanding.py
+All downstream tasks (sequence recovery, variant effect prediction, generation, etc.) can be executed using the same commands.
 
-# Using DeepSpeed or Full Sharded Data Parallel (FSDP)
-torchrun --nnodes=${NUM_NODES} \
-    --nproc_per_node=${NUM_GPUS_PER_NODE} \
-    --rdzv_backend=c10d \
-    --rdzv_endpoint=${MASTER_ADDR}:${MASTER_PORT} \
-    src/tasks/downstream/sequence_understanding.py \
-    --distributed_type deepspeed # or fsdp
-```
+---
 
-#### Causal Language Modeling Fine-tuning
+## 7. Licenses
 
-You can use the following command to fine-tune the GENERator-base model for generating specific DNA sequences, such as [DeepSTARR Enhancer](https://huggingface.co/datasets/GenerTeam/DeepSTARR-enhancer-activity), [Histone coding DNA sequence (CDS)](https://huggingface.co/datasets/GenerTeam/histone-cds), [Cytochrome P450 CDS](https://huggingface.co/datasets/GenerTeam/cytochrome-p450-cds).
+This repository follows the licenses of the original projects it is based on.
 
-```shell
-# Using single GPU
-python src/tasks/downstream/fine_tuning.py \
-    --model_name GenerTeam/GENERator-eukaryote-1.2b-base \
-    --dataset_name ${DATASET_NAME} \
-    --batch_size ${BATCH_SIZE} \
-    --num_train_epochs ${NUM_EPOCHS}
+### GENERator License
 
-# Using multiple GPUs on single node (DDP)
-torchrun --nnodes=1 \
-    --nproc_per_node=${NUM_GPUS} \
-    --rdzv_backend=c10d \
-    src/tasks/downstream/fine_tuning.py
+Please refer to the original GENERator repository for license details:
 
-# Using multiple GPUs on multiple nodes (DDP)
-torchrun --nnodes=${NUM_NODES} \
-    --nproc_per_node=${NUM_GPUS_PER_NODE} \
-    --rdzv_backend=c10d \
-    --rdzv_endpoint=${MASTER_ADDR}:${MASTER_PORT} \
-    src/tasks/downstream/fine_tuning.py
+[https://github.com/GenerTeam/GENERator.git](https://github.com/GenerTeam/GENERator.git)
 
-# Using DeepSpeed or Full Sharded Data Parallel (FSDP)
-torchrun --nnodes=${NUM_NODES} \
-    --nproc_per_node=${NUM_GPUS_PER_NODE} \
-    --rdzv_backend=c10d \
-    --rdzv_endpoint=${MASTER_ADDR}:${MASTER_PORT} \
-    src/tasks/downstream/fine_tuning.py \
-    --distributed_type deepspeed # or fsdp
-```
+### CRISPR-Cas Atlas License
 
-## 📚 Datasets
+Please refer to the CRISPR-Cas Atlas repository for license details:
 
-* [Eukaryotic Gener Tasks](https://huggingface.co/datasets/GenerTeam/gener-tasks)
-* [Prokaryotic Gener Tasks](https://huggingface.co/datasets/GenerTeam/prokaryotic-gener-tasks)
-* [Sequence Recovery](https://huggingface.co/datasets/GenerTeam/sequence-recovery)
+[https://github.com/Profluent-AI/CRISPR-Cas-Atlas.git](https://github.com/Profluent-AI/CRISPR-Cas-Atlas.git)
 
-## 📜 Citation
+No additional license restrictions are imposed by this repository.
 
-```
+---
+
+## 8. Citation
+
+If you use this repository or the associated models, please cite the following works.
+
+### GENERator
+
+```bibtex
 @misc{wu2025generator,
       title={GENERator: A Long-Context Generative Genomic Foundation Model}, 
       author={Wei Wu and Qiuyi Li and Mingyang Li and Kun Fu and Fuli Feng and Jieping Ye and Hui Xiong and Zheng Wang},
@@ -228,5 +131,18 @@ torchrun --nnodes=${NUM_NODES} \
       archivePrefix={arXiv},
       primaryClass={cs.CL},
       url={https://arxiv.org/abs/2502.07272}, 
+}
+```
+
+### CRISPR-Cas Atlas / OpenCRISPR
+
+```bibtex
+@article{profluent2024opencrispr,
+  title={Design of highly functional genome editors by modeling the universe of CRISPR-Cas sequences},
+  author={Ruffolo, Jeffrey A and Nayfach, Stephen and Gallagher, Joseph and Bhatnagar, Aadyot and Beazer, Joel and Hussain, Riffat and Russ, Jordan and Yip, Jennifer and Hill, Emily and Pacesa, Martin and others},
+  journal={bioRxiv},
+  pages={2024--04},
+  year={2024},
+  publisher={Cold Spring Harbor Laboratory}
 }
 ```
