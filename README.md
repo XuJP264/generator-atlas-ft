@@ -143,6 +143,6 @@ If you use this repository or the associated models, please cite the following w
   journal={bioRxiv},
   pages={2024--04},
   year={2024},
-  publisher={Cold Spring Harbor Laboratory}
+  publisher={Cold Spring Harbor Laboratory }
 }
 ```
