@@ -95,7 +95,7 @@ def process_data_shard(shard_id, sequences_data, args, dtype):
     model = AutoModelForCausalLM.from_pretrained(
         args.model_path, 
         trust_remote_code=True,
-        dtype=dtype
+        torch_dtype=dtype
     ).to(device)
     
     tokenizer.padding_side = "left"

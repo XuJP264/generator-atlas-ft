@@ -125,6 +125,12 @@ def parse_arguments() -> argparse.Namespace:
         help="Path to the YAML configuration file for HuggingFace Trainer",
     )
     parser.add_argument(
+        "--save_steps",
+        type=int,
+        default=None,
+        help="Save checkpoint every N training steps (e.g. 2000)",
+    )
+    parser.add_argument(
         "--distributed_type",
         type=str,
         default="ddp",
@@ -335,14 +341,25 @@ def setup_training_args(yaml_path=None, cli_args=None, **kwargs):
 
     # Merge all configurations, with priority: kwargs > cli_kwargs > yaml_kwargs
     final_kwargs = {**yaml_kwargs, **cli_kwargs, **kwargs}
+    # Handle step-based checkpoint saving
+    if cli_args is not None and hasattr(cli_args, "save_steps") and cli_args.save_steps:
+        final_kwargs["save_strategy"] = "steps"
+        final_kwargs["save_steps"] = cli_args.save_steps
+        final_kwargs["save_total_limit"] = 2
+    else:
+        final_kwargs.setdefault("save_strategy", "epoch")
 
     # Add defaults for saving strategy
-    if "save_strategy" not in final_kwargs:
-        final_kwargs["save_strategy"] = "epoch"
+    #if "save_strategy" not in final_kwargs:
+    #    final_kwargs["save_strategy"] = "epoch"
 
     # Add logging steps if not provided
     if "logging_steps" not in final_kwargs:
         final_kwargs["logging_steps"] = 10
+
+    # ===== WandB logging =====
+    final_kwargs.setdefault("report_to", ["wandb"])
+    final_kwargs.setdefault("run_name", os.environ.get("WANDB_NAME", None))
 
     # Create and return the TrainingArguments instance
     return TrainingArguments(**final_kwargs)
@@ -432,6 +449,15 @@ def main() -> None:
     """
     # Display header
     display_progress_header()
+
+    # ===== Initialize WandB (rank 0 only) =====
+    if is_main_process():
+        import wandb
+        wandb.init(
+            project=os.environ.get("WANDB_PROJECT", "generator"),
+            name=os.environ.get("WANDB_NAME", None),
+            mode=os.environ.get("WANDB_MODE", "offline"),
+        )
 
     # Start timer for total execution
     total_start_time = time.time()

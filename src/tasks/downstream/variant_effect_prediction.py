@@ -153,7 +153,7 @@ def compute_logits_shard(args):
     model = AutoModelForCausalLM.from_pretrained(
         model_path, 
         trust_remote_code=True,
-        dtype=getattr(torch, dtype)
+        torch_dtype=getattr(torch, dtype)
     ).to(device)
     
     model.eval()
