@@ -1,7 +1,7 @@
 import json
 
-JSONL_PATH = "/home/users/ntu/xu0029ng/scratch/GENERator/dataset/crispr-cas-atlas-generator/data/crispr_atlas_generator_sequences.jsonl"
-LENGTH_THRESHOLD = 8192
+JSONL_PATH = "/home/users/ntu/xu0029ng/scratch/GENERator/dataset/crispr-cas-atlas-generator/data/crispr_test.jsonl"
+LENGTH_THRESHOLD = 1920/2
 
 total = 0
 longer_than_threshold = 0

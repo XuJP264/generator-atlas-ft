@@ -9,7 +9,7 @@ from tqdm import tqdm
 # Configuration
 # =========================
 
-INPUT_JSON = "crispr-cas-atlas-v1.0.json"
+INPUT_JSON = "/home/users/ntu/xu0029ng/scratch/GENERator/dataset/crispr-cas-atlas-v1.0.json"
 OUTPUT_JSONL = "crispr_atlas_generator_sequences.jsonl"
 
 VALID_BASES = set("ACGT")
